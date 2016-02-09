@@ -1,6 +1,7 @@
 ;;; The MIT License (MIT)
 ;;;
 ;;; Copyright (c) 2014 Daniel P. Friedman, Oleg Kiselyov, and William E. Byrd
+;;; Modifications Copyright (c) 2016 Jeremy Steward
 ;;;
 ;;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;;; of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +23,10 @@
 ;;;
 ;;; Taken from https://github.com/miniKanren/miniKanren and modified to work
 ;;; with CHICKEN Scheme by Jeremy Steward on 2016-02-05
+
+;; There are two modifications of note: one to `sort`, which in CHICKEN takes
+;; the arguments in reverse order, and to `take`, which is renamed `mk#take` so
+;; as not to clash with take from srfi-1 (due to it being a builtin in CHICKEN 4.
 
 (define c->S (lambda (c) (car c)))
 
@@ -74,7 +79,7 @@
 (define-syntax run
   (syntax-rules ()
     ((_ n (x) g0 g ...)
-     (mk-take n
+     (mk#take n
            (lambdaf@ ()
                      ((fresh (x) g0 g ...
                         (lambdag@ (final-c)
@@ -86,19 +91,19 @@
   (syntax-rules ()
     ((_ (x) g ...) (run #f (x) g ...))))
 
-;; Renamed to mk-take so as not to conflict with srfi-1 take
+;; Renamed to mk#take so as not to conflict with srfi-1 take
 ;; if in use -> also a problem because srfi-1 is builtin
 ;; before CHICKEN 5.
-(define mk-take
+(define mk#take
   (lambda (n f)
     (cond
       ((and n (zero? n)) '())
       (else
         (case-inf (f)
                   (() '())
-                  ((f) (mk-take n f))
+                  ((f) (mk#take n f))
                   ((c) (cons c '()))
-                  ((c f) (cons c (mk-take (and n (- n 1)) f))))))))
+                  ((c f) (cons c (mk#take (and n (- n 1)) f))))))))
 
 (define-syntax fresh
   (syntax-rules ()
