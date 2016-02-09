@@ -1,11 +1,42 @@
+;;; The MIT License (MIT)
+;;;
+;;; Copyright (c) 2014 Daniel P. Friedman, Oleg Kiselyov, and William E. Byrd
+;;; Modifications Copyright (c) 2016 Alex Shinn, Jeremy Steward
+;;;
+;;; Permission is hereby granted, free of charge, to any person obtaining a copy
+;;; of this software and associated documentation files (the "Software"), to deal
+;;; in the Software without restriction, including without limitation the rights
+;;; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;;; copies of the Software, and to permit persons to whom the Software is
+;;; furnished to do so, subject to the following conditions:
+;;;
+;;; The above copyright notice and this permission notice shall be included in all
+;;; copies or substantial portions of the Software.
+;;;
+;;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+;;; SOFTWARE.
+;;;
+;;; Taken from https://github.com/miniKanren/miniKanren and modified to work
+;;; with CHICKEN Scheme by Jeremy Steward on 2016-02-05
+
 ;;; Code that accompanies ``The Reasoned Schemer''
 ;;; Daniel P. Friedman, William E. Byrd and Oleg Kiselyov
 ;;; MIT Press, Cambridge, MA, 2005
 ;;;
-;;; The implementation of the logic system used in the book
+;;; Mostly complete implementation of the logic system used in the book
 
-;;; Adapted for Chicken by Alex Shinn 2005-11-02 10:14:45
-;;; Adapted to latest mini-kanren by Jeremy Steward 2012-02-05
+;;; Originally Adapted for Chicken by Alex Shinn 2005-11-02 10:14:45
+;;; Adapted to latest miniKanren by Jeremy Steward 2012-02-05
+;;;
+;;; Some differences of note:
+;;; - No eqo or eq-caro, as these correspond to == and caro respectively
+;;; - Else clauses have been removed, as well as extraneous succeeds or fails
+;;; - Lambda-style definitions were converted to the simplified define forms
 
 (define (caro p a)
   (fresh (d)
