@@ -1,7 +1,6 @@
 ;;; The MIT License (MIT)
 ;;;
-;;; Copyright (c) 2014 Daniel P. Friedman, Oleg Kiselyov, and William E. Byrd
-;;; Modifications Copyright (c) 2016 Alex Shinn, Jeremy Steward
+;;; Copyright (c) 2016 Alex Shinn, Jeremy Steward
 ;;;
 ;;; Permission is hereby granted, free of charge, to any person obtaining a copy
 ;;; of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +19,13 @@
 ;;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ;;; SOFTWARE.
-;;;
-;;; Taken from https://github.com/miniKanren/miniKanren and modified to work
-;;; with CHICKEN Scheme by Jeremy Steward on 2016-02-05
 
 ;;; Code that accompanies ``The Reasoned Schemer''
 ;;; Daniel P. Friedman, William E. Byrd and Oleg Kiselyov
 ;;; MIT Press, Cambridge, MA, 2005
 ;;;
-;;; Mostly complete implementation of the logic system used in the book
+;;; Mostly complete implementation of the logic system used in the book,
+;;; adapted to CHICKEN Scheme by Alex Shinn.
 
 ;;; Originally Adapted for Chicken by Alex Shinn 2005-11-02 10:14:45
 ;;; Adapted to latest miniKanren by Jeremy Steward 2012-02-05
