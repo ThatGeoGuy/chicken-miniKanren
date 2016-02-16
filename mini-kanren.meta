@@ -7,7 +7,7 @@
         "mini-kanren.meta"
         "mini-kanren.setup"
         "LICENSE"
-        "README")
+        "README.md")
 
  (license "MIT")
  (category logic)
