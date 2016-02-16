@@ -1,0 +1,12 @@
+;; -*- Hen -*-
+
+(define (dynld-name fn)
+  (make-pathname #f fn ##sys#load-dynamic-extension))
+
+(compile -O3 -d0 -s mini-kanren.scm -j mini-kanren)
+(compile -O3 -d0 -s mini-kanren.import.scm)
+
+(install-extension
+  'mini-kanren
+  `(,(dynld-name "mini-kanren") ,(dynld-name "mini-kanren.import"))
+  `((version "1.0")))

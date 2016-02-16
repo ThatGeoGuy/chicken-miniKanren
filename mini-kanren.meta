@@ -1,0 +1,17 @@
+;; -*- Hen -*-
+
+((egg "mini-kanren.egg")
+ (files "mini-kanren.scm"
+        "mk.scm"
+        "mk-extras.scm"
+        "mini-kanren.meta"
+        "mini-kanren.setup"
+        "LICENSE"
+        "README")
+
+ (license "MIT")
+ (category logic)
+ (author "William Byrd, Dan Friedman, Oleg Kiselyov, packaged by Jeremy Steward")
+ (email "jeremy@thatgeoguy.ca")
+ (repo "https://bitbucket.org/ThatGeoGuy/chicken-minikanren")
+ (synopsis "Provides canonical miniKanren language - https://github.com/miniKanren/miniKanren"))
