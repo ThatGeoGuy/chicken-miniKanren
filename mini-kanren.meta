@@ -6,12 +6,14 @@
         "mk-extras.scm"
         "mini-kanren.meta"
         "mini-kanren.setup"
+        "mini-kanren.egg"
         "LICENSE"
         "README.md")
 
  (license "MIT")
  (category logic)
- (author "William Byrd, Dan Friedman, Oleg Kiselyov, packaged by Jeremy Steward")
+ (author "William Byrd, Dan Friedman, Oleg Kiselyov")
+ (maintainer "Jeremy Steward")
  (email "jeremy@thatgeoguy.ca")
  (repo "https://bitbucket.org/ThatGeoGuy/chicken-minikanren")
  (synopsis "Provides canonical miniKanren language - https://github.com/miniKanren/miniKanren"))
