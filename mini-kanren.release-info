@@ -1,4 +1,5 @@
 (repo git "https://bitbucket.org/ThatGeoGuy/chicken-minikanren")
 (uri targz "https://bitbucket.org/ThatGeoGuy/chicken-minikanren/get/{egg-release}.tar.gz")
+(release "1.1.1")
 (release "1.1")
 (release "1.0")

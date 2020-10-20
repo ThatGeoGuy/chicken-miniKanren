@@ -1,7 +1,7 @@
 ;; -*- Hen -*-
 
 ((synopsis "Packages the canonical miniKanren implementation for CHICKEN Scheme.")
- (version "1.1")
+ (version "1.1.1")
  (license "MIT")
  (category logic)
  (dependencies srfi-1)
