@@ -7,13 +7,6 @@ Alex Shinn and modified to work with this version of miniKanren, which
 represent code and relations from *The Reasoned Schemer* (Dan Friedman, William
 Byrd, and Oleg Kiselyov, MIT Press.).
 
-**Note**: This repository is mirrored on both
-[Bitbucket](https://bitbucket.org/ThatGeoGuy/chicken-minikanren/) and
-[Github](https://github.com/ThatGeoGuy/chicken-miniKanren). To avoid
-duplication of effort, please submit issues via Bitbucket. I have enabled
-anonymous issue reporting in case you do not wish to create a Bitbucket account
-for the sake of uploading an issue.
-
 ## From the miniKanren implementation
 
 Canonical miniKanren implementation.
