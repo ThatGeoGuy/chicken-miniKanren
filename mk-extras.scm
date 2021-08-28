@@ -35,6 +35,9 @@
 ;;; - Else clauses have been removed, as well as extraneous succeeds or fails
 ;;; - Lambda-style definitions were converted to the simplified define forms
 
+(define charo (make-tag-A 'char char?))
+(define atomo (make-tag-A 'atom atom?))
+
 (define (caro p a)
   (fresh (d)
     (== (cons a d) p)))
@@ -87,6 +90,25 @@
        (conso a res out)
        (appendo d s res)))))
 
+(define (flatteno s out)
+  (conde
+    ((nullo s) (nullo out))
+    ((pairo s)
+     (fresh (a d res-a res-d)
+       (conso a d s)
+       (flatteno a res-a)
+       (flatteno d res-d)
+       (appendo res-a res-d out)))
+    ((atomo s) (conso s '() out))))
+
+(define (lengtho xs k)
+  (conde
+   ((nullo xs) (nullo k))
+   ((fresh (a d k0)
+      (conso a d xs)
+      (-o k (build-num 1) k0)
+      (lengtho d k0)))))
+
 (define (anyo g)
   (conde
     (g)
@@ -102,3 +124,40 @@
                         ((== #f #f))
                         ((alwayso))))))
     (alwayso)))
+
+(define (everyo g lst)
+  (conde
+   ((nullo lst))
+   ((fresh (a d)
+      (conso a d lst)
+      (g a)
+      (everyo g d)))))
+
+;; A relation which guarantees no element of s will unify with another element
+;; of s.
+(define (distincto s)
+  (conde
+    ((nullo s))
+    ((fresh (a d)
+       (conso a d s)
+       (nullo d)
+       (=/= a d)))
+    ((fresh (h0 h1 t)
+       (== `(,h0 ,h1 . ,t) s)
+       (=/= h0 h1)
+       (distincto `(,h0 . ,t))
+       (distincto `(,h1 . ,t))))))
+
+;; A relation that will permute xl into the yl. May not terminate if xl is not
+;; ground.
+;;
+;; Adapted from the definition in Clojure's core.logic, LICENSE can be found at:
+;; https://github.com/clojure/core.logic/blob/master/LICENSE
+(define (permuteo xl yl)
+  (conde
+    ((nullo xl)
+     (nullo yl))
+    ((fresh (x xs ys)
+       (conso x xs xl)
+       (permuteo xs ys)
+       (rembero x yl ys)))))
