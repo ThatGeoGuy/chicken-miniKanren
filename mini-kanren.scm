@@ -42,4 +42,5 @@
   (define call-with-string-output-port call-with-output-string)
 
   (include "mk.scm")
-  (include "mk-extras.scm"))
+  (include "mk-extras.scm")
+  (include "mk-numbers.scm"))
