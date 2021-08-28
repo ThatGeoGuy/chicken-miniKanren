@@ -67,25 +67,25 @@
   (syntax-rules ()
     ((_ e (() e0) ((f^) e1) ((c^) e2) ((c f) e3))
      (let ((c-inf e))
-      (cond
-        ((not c-inf) e0)
-        ((procedure? c-inf)  (let ((f^ c-inf)) e1))
-        ((not (and (pair? c-inf)
-                   (procedure? (cdr c-inf))))
-         (let ((c^ c-inf)) e2))
-        (else (let ((c (car c-inf)) (f (cdr c-inf)))
-               e3)))))))
+       (cond
+         ((not c-inf) e0)
+         ((procedure? c-inf)  (let ((f^ c-inf)) e1))
+         ((not (and (pair? c-inf)
+                    (procedure? (cdr c-inf))))
+          (let ((c^ c-inf)) e2))
+         (else (let ((c (car c-inf)) (f (cdr c-inf)))
+                 e3)))))))
 
 (define-syntax run
   (syntax-rules ()
     ((_ n (x) g0 g ...)
      (mk$take n
-           (lambdaf@ ()
-                     ((fresh (x) g0 g ...
-                        (lambdag@ (final-c)
-                                  (let ((z ((reify x) final-c)))
-                                   (choice z empty-f))))
-                      empty-c))))))
+              (lambdaf@ ()
+                        ((fresh (x) g0 g ...
+                           (lambdag@ (final-c)
+                                     (let ((z ((reify x) final-c)))
+                                       (choice z empty-f))))
+                         empty-c))))))
 
 (define-syntax run*
   (syntax-rules ()
@@ -110,7 +110,7 @@
     ((_ (x ...) g0 g ...)
      (lambdag@ (c)
                (inc (let ((x (var 'x)) ...)
-                     (bind* (g0 c) g ...)))))))
+                      (bind* (g0 c) g ...)))))))
 
 (define-syntax bind*
   (syntax-rules ()
@@ -148,10 +148,10 @@
   (syntax-rules ()
     ((_ u ((t1) e0) ((at dt) e1) ((t2) e2))
      (let ((t u))
-      (cond
-        ((var? t) (let ((t1 t)) e0))
-        ((pair? t) (let ((at (car t)) (dt (cdr t))) e1))
-        (else (let ((t2 t)) e2)))))))
+       (cond
+         ((var? t) (let ((t1 t)) e0))
+         ((pair? t) (let ((at (car t)) (dt (cdr t))) e1))
+         (else (let ((t2 t)) e2)))))))
 
 (define make-tag-A
   (lambda (tag pred)
@@ -182,16 +182,16 @@
 (define subsume-A
   (lambda (S D A T)
     (let ((x* (rem-dups (map lhs A))))
-     (subsume-A+ x* S D A T))))
+      (subsume-A+ x* S D A T))))
 
 (define subsume-A+
   (lambda (x* S D A T)
     (cond
       ((null? x*) `(,S ,D ,A ,T))
       (else (let ((x (car x*)))
-             (let ((D/T (update-D/T x S D A T)))
-              (let ((D (car D/T)) (T (cdr D/T)))
-               `(,S ,D ,A ,T))))))))
+              (let ((D/T (update-D/T x S D A T)))
+                (let ((D (car D/T)) (T (cdr D/T)))
+                  `(,S ,D ,A ,T))))))))
 
 (define ext-A
   (lambda (x tag pred S A)
@@ -199,13 +199,13 @@
       ((null? A) `((,x . (,tag . ,pred))))
       (else
         (let ((a (car A)) (A (cdr A)))
-         (let ((a-tag (pr->tag a)))
-          (cond
-            ((eq? (walk (lhs a) S) x)
-             (cond
-               ((tag=? a-tag tag) '())
-               (else #f)))
-            (else (ext-A x tag pred S A)))))))))
+          (let ((a-tag (pr->tag a)))
+            (cond
+              ((eq? (walk (lhs a) S) x)
+               (cond
+                 ((tag=? a-tag tag) '())
+                 (else #f)))
+              (else (ext-A x tag pred S A)))))))))
 
 (define symbolo (make-tag-A 'sym symbol?))
 
@@ -234,10 +234,10 @@
       (cond
         ((eq? S+ S) (mzero))
         (else (let ((D+ (list (prefix-S S+ S))))
-               (let ((D+ (subsume A D+)))
-                (let ((D+ (subsume T D+)))
-                 (let ((D (append D+ D)))
-                  (unit `(,S ,D ,A ,T)))))))))))
+                (let ((D+ (subsume A D+)))
+                  (let ((D+ (subsume T D+)))
+                    (let ((D (append D+ D)))
+                      (unit `(,S ,D ,A ,T)))))))))))
 
 (define prefix-S
   (lambda (S+ S)
@@ -254,18 +254,18 @@
   (lambda (A/T)
     (lambda (pr-d)
       (let ((u (rhs pr-d)))
-       (cond
-         ((var? u) #f)
-         (else
-           (let ((pr (assq (lhs pr-d) A/T)))
-            (and pr
-                 (let ((tag (pr->tag pr)))
-                  (cond
-                    ((and (tag? tag)
-                          (tag? u)
-                          (tag=? u tag)))
-                    (((pr->pred pr) u) #f)
-                    (else #t)))))))))))
+        (cond
+          ((var? u) #f)
+          (else
+            (let ((pr (assq (lhs pr-d) A/T)))
+              (and pr
+                   (let ((tag (pr->tag pr)))
+                     (cond
+                       ((and (tag? tag)
+                             (tag? u)
+                             (tag=? u tag)))
+                       (((pr->pred pr) u) #f)
+                       (else #t)))))))))))
 
 (define ==
   (lambda (u v)
@@ -336,9 +336,9 @@
   (lambda (S D T)
     (lambda (A)
       (let ((D (subsume A D)))
-       (cond
-         ((verify-T T S) => (post-verify-T S D A))
-         (else #f))))))
+        (cond
+          ((verify-T T S) => (post-verify-T S D A))
+          (else #f))))))
 
 (define verify-T
   (lambda (T S)
@@ -371,19 +371,19 @@
 (define subsume-T
   (lambda (T+ S D A T)
     (let ((x* (rem-dups (map lhs A))))
-     (subsume-T+ x* T+ S D A T))))
+      (subsume-T+ x* T+ S D A T))))
 
 (define subsume-T+
   (lambda (x* T+ S D A T)
     (cond
       ((null? x*)
        (let ((T (append T+ T)))
-        `(,S ,D ,A ,T)))
+         `(,S ,D ,A ,T)))
       (else
         (let ((x (car x*)) (x* (cdr x*)))
-         (let ((D/T (update-D/T x S D A T+)))
-          (let ((D (car D/T)) (T+ (cdr D/T)))
-           (subsume-T+ x* T+ S D A T))))))))
+          (let ((D/T (update-D/T x S D A T+)))
+            (let ((D (car D/T)) (T+ (cdr D/T)))
+              (subsume-T+ x* T+ S D A T))))))))
 
 (define update-D/T
   (lambda (x S D A T)
@@ -395,13 +395,13 @@
          `(,D . ,T)))
       (else
         (let ((a (car A)))
-         (cond
-           ((and (eq? (lhs a) x)
-                 (or (tag=? (pr->tag a) 'sym)
-                     (tag=? (pr->tag a) 'num)))
-            (update-D/T+ x '() S D T))
-           (else
-             (update-D/T x S D (cdr A) T))))))))
+          (cond
+            ((and (eq? (lhs a) x)
+                  (or (tag=? (pr->tag a) 'sym)
+                      (tag=? (pr->tag a) 'num)))
+             (update-D/T+ x '() S D T))
+            (else
+              (update-D/T x S D (cdr A) T))))))))
 
 (define update-D/T+
   (lambda (x T+ S D T)
@@ -414,10 +414,10 @@
           (cond
             ((eq? (lhs t) x)
              (let ((D (ext-D x (pr->tag t) D S)))
-              (update-D/T+ x T+ S D T)))
+               (update-D/T+ x T+ S D T)))
             (else
               (let ((T+ (cons t T+)))
-               (update-D/T+ x T+ S D T)))))))))
+                (update-D/T+ x T+ S D T)))))))))
 
 (define ext-D
   (lambda (x tag D S)
@@ -450,19 +450,19 @@
     (case-value (walk u S)
                 ((x)
                  (let ((T+ (ext-T x tag S T)))
-                  (cond
-                    ((null? T+) c)
-                    (else
-                      (let ((D (subsume T+ D)))
-                       (subsume-T T+ S D A T))))))
+                   (cond
+                     ((null? T+) c)
+                     (else
+                       (let ((D (subsume T+ D)))
+                         (subsume-T T+ S D A T))))))
                 ((au du)
                  (let ((c (absento+ au tag c S D A T)))
-                  (and c
-                       (let ((S (c->S c))
-                             (D (c->D c))
-                             (A (c->A c))
-                             (T (c->T c)))
-                         (absento+ du tag c S D A T)))))
+                   (and c
+                        (let ((S (c->S c))
+                              (D (c->D c))
+                              (A (c->A c))
+                              (T (c->T c)))
+                          (absento+ du tag c S D A T)))))
                 ((u)
                  (cond
                    ((and (tag? u) (tag=? u tag)) #f)
@@ -473,19 +473,19 @@
     (cond
       ((null? T)
        (let ((pred (make-pred-T tag)))
-        `((,x . (,tag . ,pred)))))
+         `((,x . (,tag . ,pred)))))
       (else
         (let ((t (car T)) (T (cdr T)))
-         (let ((t-tag (pr->tag t)))
-          (cond
-            ((eq? (walk (lhs t) S) x)
-             (cond
-               ((tag=? t-tag tag) '())
-               (else (ext-T x tag S T))))
-            ((tag=? t-tag tag)
-             (let ((t-pred (pr->pred t)))
-              (ext-T+ x tag t-pred S T)))
-            (else (ext-T x tag S T)))))))))
+          (let ((t-tag (pr->tag t)))
+            (cond
+              ((eq? (walk (lhs t) S) x)
+               (cond
+                 ((tag=? t-tag tag) '())
+                 (else (ext-T x tag S T))))
+              ((tag=? t-tag tag)
+               (let ((t-pred (pr->pred t)))
+                 (ext-T+ x tag t-pred S T)))
+              (else (ext-T x tag S T)))))))))
 
 (define ext-T+
   (lambda (x tag pred S T)
@@ -493,17 +493,17 @@
       ((null? T) `((,x . (,tag . ,pred))))
       (else
         (let ((t (car T)))
-         (let ((t-tag (pr->tag t)))
-          (cond
-            ((eq? (walk (lhs t) S) x)
-             (cond
-               ((tag=? t-tag tag) '())
-               (else
-                 (ext-T+ x tag pred S
-                         (cdr T)))))
-            (else
-              (ext-T+ x tag pred S
-                      (cdr T))))))))))
+          (let ((t-tag (pr->tag t)))
+            (cond
+              ((eq? (walk (lhs t) S) x)
+               (cond
+                 ((tag=? t-tag tag) '())
+                 (else
+                   (ext-T+ x tag pred S
+                           (cdr T)))))
+              (else
+                (ext-T+ x tag pred S
+                        (cdr T))))))))))
 
 (define make-pred-T
   (lambda (tag)
@@ -549,11 +549,11 @@
 (define unify
   (lambda (u v S)
     (let ((u (walk u S)) (v (walk v S)))
-     (cond
-       ((and (pair? u) (pair? v))
-        (let ((S (unify (car u) (car v) S)))
-         (and S (unify (cdr u) (cdr v) S))))
-       (else (unify-nonpair u v S))))))
+      (cond
+        ((and (pair? u) (pair? v))
+         (let ((S (unify (car u) (car v) S)))
+           (and S (unify (cdr u) (cdr v) S))))
+        (else (unify-nonpair u v S))))))
 
 (define unify-nonpair
   (lambda (u v S)
@@ -593,10 +593,10 @@
   (lambda (v S)
     (case-value (walk v S)
                 ((x) (let ((n (length S)))
-                      (let ((name (reify-name n)))
-                       (cons `(,x . ,name) S))))
+                       (let ((name (reify-name n)))
+                         (cons `(,x . ,name) S))))
                 ((av dv) (let ((S (reify-S av S)))
-                          (reify-S dv S)))
+                           (reify-S dv S)))
                 ((v) S))))
 
 (define reify-name
@@ -610,38 +610,38 @@
       (let ((S (c->S c)) (D (c->D c))
                          (A (c->A c)) (T (c->T c)))
         (let ((v (walk* x S)))
-         (let ((S (reify-S v '())))
-          (reify+ v S
-                  (let ((D (remp
-                             (lambda (d) (anyvar? d S))
-                             D)))
-                    (rem-subsumed D))
-                  (remp
-                    (lambda (a)
-                      (var? (walk (lhs a) S)))
-                    A)
-                  (remp
-                    (lambda (t)
-                      (var? (walk (lhs t) S)))
-                    T))))))))
+          (let ((S (reify-S v '())))
+            (reify+ v S
+                    (let ((D (remp
+                               (lambda (d) (anyvar? d S))
+                               D)))
+                      (rem-subsumed D))
+                    (remp
+                      (lambda (a)
+                        (var? (walk (lhs a) S)))
+                      A)
+                    (remp
+                      (lambda (t)
+                        (var? (walk (lhs t) S)))
+                      T))))))))
 
 (define reify+
   (lambda (v S D A T)
     (let ((D (subsume A D)))
-     (let ((A (map (lambda (a)
-                     (let ((x (lhs a))
-                           (tag (pr->tag a)))
-                       `(,x . ,tag)))
-                   A))
-           (T (map (lambda (t)
-                     (let ((x (lhs t))
-                           (tag (pr->tag t)))
-                       `(,x . ,tag)))
-                   T)))
-       (form (walk* v S)
-             (walk* D S)
-             (walk* A S)
-             (rem-subsumed-T (walk* T S)))))))
+      (let ((A (map (lambda (a)
+                      (let ((x (lhs a))
+                            (tag (pr->tag a)))
+                        `(,x . ,tag)))
+                    A))
+            (T (map (lambda (t)
+                      (let ((x (lhs t))
+                            (tag (pr->tag t)))
+                        `(,x . ,tag)))
+                    T)))
+        (form (walk* v S)
+              (walk* D S)
+              (walk* A S)
+              (rem-subsumed-T (walk* T S)))))))
 
 (define form
   (lambda (v D A T)
@@ -649,11 +649,11 @@
           (fa (sorter (map sort-part (partition* A))))
           (ft (drop-dot-T (sorter T))))
       (let ((fb (append ft fa)))
-       (cond
-         ((and (null? fd) (null? fb)) v)
-         ((null? fd) `(,v . ,fb))
-         ((null? fb) `(,v . ((=/= . ,fd))))
-         (else `(,v (=/= . ,fd) . ,fb)))))))
+        (cond
+          ((and (null? fd) (null? fb)) v)
+          ((null? fd) `(,v . ,fb))
+          ((null? fb) `(,v . ((=/= . ,fd))))
+          (else `(,v (=/= . ,fd) . ,fb)))))))
 
 (define drop-dot-D
   (lambda (D)
@@ -693,36 +693,36 @@
 (define rem-subsumed
   (lambda (D)
     (let loop ((D D) (D+ '()))
-     (cond
-       ((null? D) D+)
-       ((or (subsumed? (car D) (cdr D))
-            (subsumed? (car D) D+))
-        (loop (cdr D) D+))
-       (else (loop (cdr D)
-                   (cons (car D) D+)))))))
+      (cond
+        ((null? D) D+)
+        ((or (subsumed? (car D) (cdr D))
+             (subsumed? (car D) D+))
+         (loop (cdr D) D+))
+        (else (loop (cdr D)
+                    (cons (car D) D+)))))))
 
 (define subsumed?
   (lambda (d D)
     (cond
       ((null? D) #f)
       (else (let ((d^ (unify* (car D) d)))
-             (or (and d^ (eq? d^ d))
-                 (subsumed? d (cdr D))))))))
+              (or (and d^ (eq? d^ d))
+                  (subsumed? d (cdr D))))))))
 
 (define rem-subsumed-T
   (lambda (T)
     (let loop ((T T) (T^ '()))
-     (cond
-       ((null? T) T^)
-       (else
-         (let ((x (lhs (car T)))
-               (tag (rhs (car T))))
-           (cond
-             ((or (subsumed-T? x tag (cdr T))
-                  (subsumed-T? x tag T^))
-              (loop (cdr T) T^))
-             (else (loop (cdr T)
-                         (cons (car T) T^))))))))))
+      (cond
+        ((null? T) T^)
+        (else
+          (let ((x (lhs (car T)))
+                (tag (rhs (car T))))
+            (cond
+              ((or (subsumed-T? x tag (cdr T))
+                   (subsumed-T? x tag T^))
+               (loop (cdr T) T^))
+              (else (loop (cdr T)
+                          (cons (car T) T^))))))))))
 
 (define subsumed-T?
   (lambda (x tag1 T)
@@ -746,13 +746,13 @@
        (cons `(,tag . ,x*) (partition* y*)))
       ((tag=? (rhs (car A)) tag)
        (let ((x (lhs (car A))))
-        (let ((x* (cond
-                    ((memq x x*) x*)
-                    (else (cons x x*)))))
-          (part tag (cdr A) x* y*))))
+         (let ((x* (cond
+                     ((memq x x*) x*)
+                     (else (cons x x*)))))
+           (part tag (cdr A) x* y*))))
       (else
         (let ((y* (cons (car A) y*)))
-         (part tag (cdr A) x* y*))))))
+          (part tag (cdr A) x* y*))))))
 
 (define partition*
   (lambda (A)
@@ -775,7 +775,7 @@
     ((_ (x ...) g g* ...)
      (lambdag@ (c : S D A T)
                (let ((x (walk* x S)) ...)
-                ((fresh () g g* ...) c))))))
+                 ((fresh () g g* ...) c))))))
 
 (define-syntax conda
   (syntax-rules ()
@@ -790,14 +790,14 @@
     ((_) (mzero))
     ((_ (e g ...) b ...)
      (let loop ((c-inf e))
-      (case-inf c-inf
-                (() (ifa b ...))
-                ((f) (inc (loop (f))))
-                ((a) (bind* c-inf g ...))
-                ((a f) (bind* c-inf g ...)))))))
+       (case-inf c-inf
+                 (() (ifa b ...))
+                 ((f) (inc (loop (f))))
+                 ((a) (bind* c-inf g ...))
+                 ((a f) (bind* c-inf g ...)))))))
 
 (define-syntax condu
-  (syntax-rules (else)
+  (syntax-rules ()
     ((_ (g0 g ...) (g1 g^ ...) ...)
      (lambdag@ (c)
                (inc
@@ -809,11 +809,10 @@
     ((_) (mzero))
     ((_ (e g ...) b ...)
      (let loop ((c-inf e))
-      (case-inf c-inf
-                (() (ifu b ...))
-                ((f) (inc (loop (f))))
-                ((c) (bind* c-inf g ...))
-                ((c f) (bind* (unit c) g ...)))))))
+       (case-inf c-inf
+                 (() (ifu b ...))
+                 ((f) (inc (loop (f))))
+                 ((c) (bind* c-inf g ...))
+                 ((c f) (bind* (unit c) g ...)))))))
 
 (define onceo (lambda (g) (condu (g))))
-
