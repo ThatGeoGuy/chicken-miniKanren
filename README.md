@@ -7,32 +7,22 @@ Alex Shinn and modified to work with this version of miniKanren, which
 represent code and relations from *The Reasoned Schemer* (Dan Friedman, William
 Byrd, and Oleg Kiselyov, MIT Press.).
 
-## From the miniKanren implementation
+## Official Documentation
 
-Canonical miniKanren implementation.
+The official documentation is hosted on the [CHICKEN Scheme
+wiki](https://wiki.call-cc.org/eggref/5/mini-kanren). See the documentation for
+the latest description of the egg and its API.
 
-Implements the language described in the paper:
+## Bugs, Issues, etc.
 
-William E. Byrd, Eric Holk, and Daniel P. Friedman. miniKanren, Live and Untagged: Quine Generation via Relational Interpreters (Programming Pearl). To appear in the Proceedings of the 2012 Workshop on Scheme and Functional Programming, Copenhagen, Denmark, 2012.
+I prefer issues to be submitted via Github issues, as I can relate them
+directly back to a branch or pull-request. However, if you do not wish to make
+a Github account to submit issues, the [CHICKEN bug
+tracker](http://bugs.call-cc.org) is also acceptable. Please assign the issue
+to "Jeremy Steward" there. I also often hang out in the `#chicken` channel on
+Libera.chat, if you wish to discuss something over IRC.
 
-### CORE LANGUAGE
+## License
 
-**Logical operators:**
-
-==
-fresh
-conde
-
-**Interface operators:**
-
-run
-run\*
-
-### EXTENDED LANGUAGE
-
-**Constraint operators:**
-
-=/=
-symbolo
-numbero
-absento
+See [LICENSE](LICENSE) for more details. This code is released under the MIT
+license following that of the canonical miniKanren implementation.
