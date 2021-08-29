@@ -1,0 +1,459 @@
+[[tags: egg]]
+
+== CHICKEN miniKanren
+
+This repository provides the [[https://github.com/miniKanren/miniKanren|canonical miniKanren
+implementation]], wrapped as an egg
+for CHICKEN Scheme. The egg also includes extensions originally provided by Alex Shinn and modified
+to work with this version of miniKanren, which represent code and relations from *The Reasoned
+Schemer 2nd Ed.* (Dan Friedman, William Byrd, and Oleg Kiselyov, MIT Press.).
+
+[[toc:]]
+
+== Installation
+
+ $ chicken-install -s mini-kanren
+
+Or
+
+ $ chicken-install -s -test mini-kanren
+
+== Modules
+
+To get started with this egg, you can import {{mini-kanren}} module:
+
+ #;1> (import mini-kanren)
+
+== miniKanren Language
+
+The miniKanren language is a relational programming language described in the book
+"[[https://mitpress.mit.edu/books/reasoned-schemer-second-edition|The Reasoned Schemer]]." For a
+complete understanding of the language and how to use the various procedures provided by this egg,
+it is suggested that one work through the Reasoned Schemer.
+
+If you cannot obtain a copy of the book, or simply wish to learn miniKanren through different means,
+the official language page has a host of useful
+[[http://minikanren.org/#writtenTutorials|tutorials]] for getting started.
+
+== Glossary
+
+Here is a list of terms that may pop up often in the documentation.
+
+; Succeed / success : A condition in which a goal has completed and unified any and all symbols relevant to the goal's definition.
+; Fail / failure : A condition in which a goal has completed and has not unified all symbols passed to that goal.
+; Goal : A statement within the miniKanren language that seeks to unify zero or more logic variables relevant to its definition. A goal can be thought of as a statment about some entity or entities, e.g. The goal {{(caro l a)}} unifies the variable {{a}} with the {{car}} of list {{l}}. A goal can be thought of as any relational procedure that returns a success or failure.
+; Logic variable : A symbol representing some quantity (known or unknown) to be related by some goal(s). A variable is '''ground''' if-and-only-if it represents a single possible value. Otherwise, the variable is considered '''fresh'''
+; Unification : the process in which a logic variable is ground to a value. E.g. the goal {{(== q 1)}} unifies the variable {{q}} to the value {{1}}. If {{q}} is already ground, this goal must fail.  However, if {{q}} is fresh, then this goal succeeds and the logic variable {{q}} is thereafter ground.
+
+== Egg / Language API
+
+=== Core Language
+
+==== Interface operators
+
+<macro>(run* (x) goal0 goal ...)</macro>
+
+Primary interface operator for miniKanren. {{run*}} instantiates a fresh variable {{x}}, and runs
+through each subsequent goal provided. It returns a list of all possible unifications of {{x}} where
+goals {{goal0}}, {{goal}}, and so on succeed.
+
+'''Note''': As long as there are a finite number of possible values that can be unified with {{x}},
+then {{run*}} is guaranteed to terminate. However, this importantly doesn't make two guarantees:
+
+*# The speed at which the answers will be found. The runtime is generally fast, but miniKanren, and more generally relational and logic programming necessarily requires one to think about the best way to prune the search space of possible answers.
+*# The order of answers in {{x}} that satisfy the goals.
+
+<macro>(run n (x) goal0 goal ...)</macro>
+
+Interface operator for miniKanren. Behaves like {{run*}}, except that it will only provide up to
+{{n}} possible unifications of {{x}}. This is useful if there are a finite number of solutions and
+one wants to merely ''take'' the first {{n}} possible solutions.
+
+==== Logical Operators
+
+<constant>succeed</constant>
+
+A goal that is always successful. Equivalent to {{(== #f #f)}}.
+
+<constant>fail</constant>
+
+A goal that always fails. Equivalent to {{(== #t #f)}}.
+
+<macro>(fresh (a ...) goal0 goal ...)</macro>
+
+Creates a logic variable bound to each of the symbol(s) {{(a ...)}}. These logic variables are then
+lexically scoped within this macro, whereupon each of the subsequent goals can be evaluated.
+
+Example:
+
+<enscript highlight="scheme">
+(run* (q)
+  (fresh (a d)
+    (== a 1)
+    (nullo d)
+    (conso a d q)))
+; => ((1))
+</enscript>
+
+<macro>(conde (goal0 goal ...) (goal0^ goal^ ...) ...)</macro>
+
+Conditional performing logical disjunction over each set of {{(goal0 goal ...)}} clauses. The first
+goal in each clause (i.e. {{goal0}} or {{goal0^}}) is considered the head of that clause. Behaves
+similarly to {{cond}} in regular Scheme, except that each clause provides one possible path to
+unification through the subsequent goals.
+
+In the first edition of miniKanren, {{conde}} was separate from {{condi}}, which is no longer
+provided as part of the language. {{conde}} now interleaves each of the possible clauses on
+recursive calls, so {{condi}} (which used to stand for interleaving-conditional) is no longer
+needed.
+
+<macro>(conda (goal0 goal ...) (goal0^ goal^ ...) ...)</macro>
+
+Conditional behaving much like {{conde}}, except that {{conda}} does a soft-cut over the remaining
+goals. That is to say, if any of the heads of the clauses succeed, then the remaining clauses will
+all be ''cut'' (i.e. ignored) from future searches.
+
+<macro>(ifa (goal0 goal ...) b ...)</macro>
+
+Single-branch version of {{conda}}. {{ifa}} relates to {{conda}} the way that {{if}} relates to
+{{cond}} in regular Scheme.
+
+<macro>(condu (goal0 goal ...) (goal0^ goal^ ...) ...)</macro>
+
+Conditional behaving much like {{conde}}, except that {{condu}} performs a ''committed choice''.
+What that means is that if the head of any goal succeeds, then the remaining goals of that clause
+will only be run once thereafter.
+
+<macro>(ifu (goal0 goal ...) b ...)</macro>
+
+Single-branch version of {{condu}}. {{ifu}} relates to {{condu}} the way that {{if}} relates to
+{{cond}} in regular Scheme.
+
+<procedure>(== u v)</procedure>
+
+Primary unification goal. {{u}} and {{v}} are either logic variables or values. If the two can
+be unified (i.e. if the two logic variables hold the same value, or if two values are the same) then
+this goal succeeds. When used on fresh variables, guarantees that the two logic variables will always
+be unified.
+
+<procedure>(=/= u v)</procedure>
+
+Disequality goal. This goal succeeds if-and-only-if {{u}} and {{v}} are not unified. When used on
+fresh variables, ensures that {{u}} and {{v}} never unify.
+
+<procedure>(var? v)</procedure>
+
+Predicate procedure (not a goal) that returns true if-and-only-if {{v}} is a logic variable.
+
+<macro>(project (x ...) goal0 goal ...)</macro>
+
+Extracts the value of zero or more logic variables into lexical variables of the same name, and
+executes the goals within the body of the {{project}} call.
+
+Example:
+
+<enscript highlight="scheme">
+;; The following code will fail because `+` is not relational.
+(run 1 (q)
+  (fresh (a b)
+    (== a 1)
+    (== b 2)
+    (== q (+ a b))))
+
+; => Error: (+) bad argument type - not a number: #(a)
+
+
+;; However, if we use project to get the values of the logic variables,
+;; we can use those directly.
+(run 1 (q)
+  (fresh (a b)
+    (== a 1)
+    (== b 1)
+    (project (a b)
+      (== q (+ a b)))))
+
+; => (3)
+</enscript>
+
+{{project}} can be though of as an escape hatch to break out of miniKanren. It will give you the
+values of the variables, but it only works if the variables are grounded. In the above example, if
+the logic variable {{b}} is not ground, then the {{b}} inside the body of {{project}} will not be
+lexically bound to anything, and will still be a fresh logic variable.
+
+In most cases it is advised to avoid {{project}} when you can. It can be a powerful tool for
+debugging the values of logic variables when writing miniKanren code; however, excessive use will
+lead to extremely non-relational code that will be hard to work with in miniKanren.
+
+<procedure>(onceo goal)</procedure>
+
+A procedure that ensures that {{goal}} executes exactly one time.
+
+==== Predicate Goals
+
+<procedure>(make-tag-A tag pred)</procedure>
+
+Constructs a goal that succeeds whenever {{pred}} returns {{#t}} for a single value, and fails if
+{{pred}} returns {{#f}} for that value. This creates a predicate-goal that tags the logic variable
+with the tag name {{tag}}.
+
+'''Note''': This is primarily useful for atomic-type predicates, i.e. predicates for atomic types
+that do not have explicit constructors. This is what is used to implement {{symbolo}}, for example:
+
+<enscript highlight"scheme">
+(define symbolo (make-tag-A 'sym symbol?))
+</enscript>
+
+One should avoid using this for types that have constructors (e.g. pairs have {{cons}}, lists have
+{{list}}), and should instead prefer creating relational constructors for such types. This egg
+provides {{symbolo}}, {{numbero}}, {{booleano}}, {{charo}}, and {{atomo}} using this method.
+However, {{make-tag-A}} is highlighted here in case users have new atomic types that they wish to
+extend miniKanren with.
+
+<procedure>(symbolo s)</procedure>
+
+A tagged constraint goal that succeeds if-and-only-if {{s}} can be unified with a symbol.
+
+<procedure>(numbero n)</procedure>
+
+A tagged constraint goal that succeeds if-and-only-if {{n}} can be unified with a number.
+
+<procedure>(booleano b)</procedure>
+
+Predicate goal that succeeds if-and-only-if {{b}} can be unified with a boolean. When {{b}} is
+fresh, this guarantees that {{b}} can only be unified with {{#t}} or {{#f}}.
+
+<procedure>(charo c)</procedure>
+
+A tagged constraint goal that succeeds if-and-only-if {{c}} can be unified with a character.
+
+<procedure>(atomo a)</procedure>
+
+A tagged constraint goal that succeeds if-and-only-if {{a}} can be unified with an atom.
+
+<procedure>(nullo p)</procedure>
+
+Predicate goal that succeeds if-and-only-if {{p}} is the null list. When {{p}} is fresh, it
+guarantees that {{p}} can only unify with the null list {{'()}}.
+
+<procedure>(pairo p)</procedure>
+
+Predicate goal that succeeds if-and-only-if {{p}} unifies with any pair. When {{p}} is fresh, it
+guarantees that {{p}} can only unify with a pair.
+
+<procedure>(listo l)</procedure>
+
+Predicate goal that succeeds if-and-only-if {{l}} unifies with any list. When {{l}} is fresh, it
+guarantees that {{l}} can only unify with a proper list.
+
+=== Numbers in miniKanren
+
+The procedures defined here are largely the same as in ''The Reasoned Schemer''. As it turns out,
+constructing relations over numbers is very hard. Specifically, relations involving decimal number
+systems are very hard. It is much easier when representing numbers as bits, where operations on each
+bit can be performed relationally.
+
+While individual numbers can be unified in the miniKanren language, doing any kind of arithmetic on
+them will be quite difficult if you want to keep everything relational. To get around this, we first
+convert numbers into a list of bits in little-endian order, and perform relations on those lists.
+From there, we can convert to / from bit-lists in order to switch between decimal representations
+(e.g 1, 2, 7, 42, ...) and bit representations (e.g. 0 is {{'()}}, 1 is {{(1)}}, 2 is {{(0 1)}},
+etc.).
+
+As you might guess, this can end up making many numerical operations quite slow, especially for
+large numbers. There are some ways to get around this by introducing finite domains, but this egg
+does not currently provide operations on finite domains of numbers. Likewise, {{project}} is always
+an option, but remember: it is an escape hatch and is not generally recommended.
+
+Floating point / inexact numbers are not supported in miniKanren.
+
+Negative numbers are not supported in miniKanren.
+
+<procedure>(build-num n)</procedure>
+
+Constructs a bit-list to represent a number given a positive exact number.
+
+Example:
+
+<enscript highlight="scheme">
+(build-num 0) ; => ()
+(build-num 1) ; => (1)
+(build-num 2) ; => (0 1)
+</enscript>
+
+<procedure>(little-endian->number b)</procedure>
+
+Procedure that converts a bit-list in little-endian form back into a Scheme number. The opposite of
+{{build-num}}.
+
+<procedure>(zeroo n)</procedure>
+
+A goal that succeeds if-and-only-if the logic variable {{n}} is zero (i.e. null bit list). When
+{{n}} is fresh, this guarantees that it can only ever be bound to the null list. This makes it
+equivalent to {{(nullo n)}}.
+
+<procedure>(poso n)</procedure>
+
+A goal that succeeds if-and-only-if the logic variable {{n}} is a positive number (i.e. non-null bit
+list). When {{n}} is fresh, this guarantees that it can only ever be bound to a non-null bit list.
+This makes it equivalent to {{(listo n)}}.
+
+<procedure>(pluso n m k)</procedure>
+<procedure>(+o n m k)</procedure>
+
+A goal that unifies two logic variables {{n}} and {{m}} such that the bit-lists they represent sum
+to {{k}} when added. Think of this as if you were doing {{(define k (+ n m))}}, except that it is
+relational.
+
+Example:
+
+<enscript highlight="scheme">
+(run 1 (q)
+  (let ((a (build-num 4))
+        (b (build-num 3)))
+    (fresh (n k)
+      (== k a)
+      (== n b)
+      (pluso n q k))))
+; => (1)
+</enscript>
+
+<procedure>(minuso n m k)</procedure>
+<procedure>(-o n m k)</procedure>
+
+A goal that unifies two logic variables {{n}} and {{m}} such that the bit-lists they represent
+subtract to {{k}}. Think of this as if you were doing {{define k (- n m))}}, except that it is
+relational.
+
+<procedure>(*o n m p)</procedure>
+
+A goal that unifies two logic variables {{n}} and {{m}} such that the bit-lists they represent
+multiply to {{k}}. Think of this as if you were doing {{(define k (* n m))}}, except that it is
+relational.
+
+<procedure>(/o n m q r)</procedure>
+
+A goal that unifies two logic variables {{n}} and {{m}} such that the bit-lists they represent
+divide to the quotient {{q}} with remainder {{r}}.
+
+<procedure>(<o n m)</procedure>
+<procedure>(<=o n m)</procedure>
+
+Predicate goals that succeed if-and-only-if {{n}} is less than (or equal to, in the latter case)
+{{m}}.
+
+<procedure>(logo n b q r)</procedure>
+
+Goal that unifies two logic variables {{n}} (number) and {{b}} (base) such that they form the
+logarithm with power {{q}} and remainder {{r}}.
+
+<procedure>(expo b q n)</procedure>
+
+Goal that unifies the two logic variables {{b}} and {{q}} such that they form the exponential {{n}}.
+Think of this as doing {{(define n (expt b q))}}, except that it is relational.
+
+=== Extras
+
+<procedure>(caro p a)</procedure>
+
+Goal that unifies a logic variable representing a pair {{p}} with the car of that pair, {{a}}.
+
+<procedure>(cdro p d)</procedure>
+
+Goal that unifies a logic variable representing a pair {{p}} with the cdr of that pair, {{d}}.
+
+<procedure>(conso a d p)</procedure>
+
+Goal that unifies two logic variables {{a}} and {{d}}, representing the car and cdr of a pair, with
+the logic variable representing the pair {{p}}.
+
+<procedure>(membero x l)</procedure>
+
+Goal that unifies {{x}} with any member of the list {{l}}.
+
+<procedure>(rembero x l out)</procedure>
+
+Goal that unifies {{out}} with a list where {{x}} has been removed from {{l}}.
+
+<procedure>(appendo l s out)</procedure>
+
+Goal that unifies two lists {{l}} and {{s}} with a list {{out}}, which is the two lists appended to
+one another.
+
+<procedure>(flatteno s out)</procedure>
+
+Goal that unifies a list {{s}} with {{out}}, where {{out}} represents a list with the same elements
+of {{s}}, except that {{out}} is flattened (i.e. only contains atoms, not pairs).
+
+<procedure>(lengtho s n)</procedure>
+
+Goal that unifies a list {{s}} with the length of that list {{k}}.
+
+<procedure>(anyo goal)</procedure>
+
+Goal that succeeds if {{goal}} succeeds.
+
+<constant>nevero</constant>
+
+Goal that always fails. Equivalent to {{(anyo fail)}}.
+
+<constant>alwayso</constant>
+
+Goal that always succeeds.
+
+<procedure>(distincto s)</procedure>
+
+Goal that guarantees that no element of the list {{s}} will ever unify with another element of
+{{s}}.
+
+<procedure>(permuteo xl yl)</procedure>
+
+Goal that permutes {{xl}} into {{yl}}. It may not terminate if {{xl}} is not ground.
+
+Example:
+
+<enscript highlight="scheme">
+;; Get 5-permute-2, i.e. all 2 permutations of the numbers 1 through 5.
+(run* (q)
+  (lengtho q (build-num 2))
+  (permuteo '(1 2 3 4 5) q))
+
+; => (1 2) (2 1) (2 3) (1 3) (3 1) (3 2) (3 4) (2 4) (1 4) (4 1) (4 2)
+;    (4 3) (3 5) (4 5) (2 5) (1 5) (5 1) (5 2) (5 3) (5 4))
+</enscript>
+
+== Repository
+
+Find the project on [[https://github.com/ThatGeoGuy/chicken-miniKanren|Github]].
+
+== Version History
+
+; 1.2.0 : Adds {{flatteno}}, {{lengtho}}, {{distincto}}, and {{permuteo}}
+; 1.1.1 : Removes {{test}} egg from test-dependencies.
+; 1.1 : CHICKEN 5 support
+
+== License
+
+<enscript highlight="none">
+The MIT License (MIT)
+
+Copyright (c) 2014 Daniel P. Friedman, Oleg Kiselyov, and William E. Byrd
+Modifications Copyright (c) 2016 Alex Shinn, Jeremy Steward
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</enscript>
