@@ -5,6 +5,7 @@
  (license "MIT")
  (category logic)
  (dependencies srfi-1)
+ (test-dependencies test)
  (author "William Byrd, Dan Friedman, Oleg Kiselyov")
  (maintainer "Jeremy Steward")
  (components
