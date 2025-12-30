@@ -9,4 +9,4 @@
 (install-extension
   'mini-kanren
   `(,(dynld-name "mini-kanren") ,(dynld-name "mini-kanren.import"))
-  `((version "1.3.1")))
+  `((version "1.3.2")))
