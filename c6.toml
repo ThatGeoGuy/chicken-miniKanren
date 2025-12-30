@@ -1,0 +1,5 @@
+[toolchain]
+version = "6.0.0pre2"
+
+[environment]
+prefix = "c6"

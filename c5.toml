@@ -1,0 +1,5 @@
+[toolchain]
+version = "5.4.0"
+
+[environment]
+prefix = "c5"
