@@ -160,7 +160,7 @@
                 (case-value (walk u S)
                             ((x) (cond
                                    ((make-tag-A+ x tag pred c S D A T) =>
-                                                                       unit)
+                                    unit)
                                    (else (mzero))))
                             ((au du) (mzero))
                             ((u) (cond
@@ -171,12 +171,12 @@
   (lambda (u tag pred c S D A T)
     (cond
       ((ext-A (walk u S) tag pred S A) =>
-                                       (lambda (A+)
-                                         (cond
-                                           ((null? A+) c)
-                                           (else (let ((D (subsume A+ D))
-                                                       (A (append A+ A)))
-                                                   (subsume-A S D A T))))))
+       (lambda (A+)
+         (cond
+           ((null? A+) c)
+           (else (let ((D (subsume A+ D))
+                       (A (append A+ A)))
+                   (subsume-A S D A T))))))
       (else #f))))
 
 (define subsume-A
@@ -272,7 +272,7 @@
     (lambdag@ (c : S D A T)
               (cond
                 ((unify u v S) =>
-                               (post-unify-== c S D A T))
+                 (post-unify-== c S D A T))
                 (else (mzero))))))
 
 (define post-unify-==
@@ -281,10 +281,10 @@
       (cond
         ((eq? S+ S) (unit c))
         ((verify-D D S+) =>
-                         (lambda (D)
-                           (cond
-                             ((post-verify-D S+ D A T) => unit)
-                             (else (mzero)))))
+         (lambda (D)
+           (cond
+             ((post-verify-D S+ D A T) => unit)
+             (else (mzero)))))
         (else (mzero))))))
 
 (define verify-D
@@ -292,25 +292,25 @@
     (cond
       ((null? D) '())
       ((verify-D (cdr D) S) =>
-                            (lambda (D+)
-                              (verify-D+ (car D) D+ S)))
+       (lambda (D+)
+         (verify-D+ (car D) D+ S)))
       (else #f))))
 
 (define verify-D+
   (lambda (d D S)
     (cond
       ((unify* d S) =>
-                    (lambda (S+)
-                      (cond
-                        ((eq? S+ S) #f)
-                        (else (cons (prefix-S S+ S) D)))))
+       (lambda (S+)
+         (cond
+           ((eq? S+ S) #f)
+           (else (cons (prefix-S S+ S) D)))))
       (else D))))
 
 (define post-verify-D
   (lambda (S D A T)
     (cond
       ((verify-A A S) =>
-                      (post-verify-A S D T))
+       (post-verify-A S D T))
       (else #f))))
 
 (define verify-A
@@ -318,18 +318,18 @@
     (cond
       ((null? A) '())
       ((verify-A (cdr A) S) =>
-                            (lambda (A0)
-                              (let ((u (walk (lhs (car A)) S))
-                                    (tag (pr->tag (car A)))
-                                    (pred (pr->pred (car A))))
-                                (cond
-                                  ((var? u)
-                                   (cond
-                                     ((ext-A u tag pred S A0) =>
-                                                              (lambda (A+)
-                                                                (append A+ A0)))
-                                     (else #f)))
-                                  (else (and (pred u) A0))))))
+       (lambda (A0)
+         (let ((u (walk (lhs (car A)) S))
+               (tag (pr->tag (car A)))
+               (pred (pr->pred (car A))))
+           (cond
+             ((var? u)
+              (cond
+                ((ext-A u tag pred S A0) =>
+                 (lambda (A+)
+                   (append A+ A0)))
+                (else #f)))
+             (else (and (pred u) A0))))))
       (else #f))))
 
 (define post-verify-A
@@ -355,11 +355,11 @@
         (case-value (walk x S)
                     ((x) (cond
                            ((ext-T+ x tag pred S T0) =>
-                                                     (lambda (T+) (append T+ T0)))
+                            (lambda (T+) (append T+ T0)))
                            (else #f)))
                     ((au du) (cond
                                (((verify-T+ au T S) T0) =>
-                                                        (verify-T+ du T S))
+                                (verify-T+ du T S))
                                (else #f)))
                     ((u) (and (pred u) T0)))))))
 
@@ -543,7 +543,7 @@
   (lambda (u S)
     (cond
       ((and (var? u) (assq u S)) =>
-                                 (lambda (pr) (walk (rhs pr) S)))
+       (lambda (pr) (walk (rhs pr) S)))
       (else u))))
 
 (define unify
@@ -608,7 +608,7 @@
   (lambda (x)
     (lambda (c)
       (let ((S (c->S c)) (D (c->D c))
-                         (A (c->A c)) (T (c->T c)))
+            (A (c->A c)) (T (c->T c)))
         (let ((v (walk* x S)))
           (let ((S (reify-S v '())))
             (reify+ v S
@@ -699,7 +699,7 @@
              (subsumed? (car D) D+))
          (loop (cdr D) D+))
         (else (loop (cdr D)
-                    (cons (car D) D+)))))))
+                (cons (car D) D+)))))))
 
 (define subsumed?
   (lambda (d D)
@@ -722,7 +722,7 @@
                    (subsumed-T? x tag T^))
                (loop (cdr T) T^))
               (else (loop (cdr T)
-                          (cons (car T) T^))))))))))
+                      (cons (car T) T^))))))))))
 
 (define subsumed-T?
   (lambda (x tag1 T)

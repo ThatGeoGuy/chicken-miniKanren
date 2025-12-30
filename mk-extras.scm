@@ -103,11 +103,11 @@
 
 (define (lengtho xs k)
   (conde
-   ((nullo xs) (nullo k))
-   ((fresh (a d k0)
-      (conso a d xs)
-      (-o k (build-num 1) k0)
-      (lengtho d k0)))))
+    ((nullo xs) (nullo k))
+    ((fresh (a d k0)
+       (conso a d xs)
+       (-o k (build-num 1) k0)
+       (lengtho d k0)))))
 
 (define (anyo g)
   (conde
@@ -127,11 +127,11 @@
 
 (define (everyo g lst)
   (conde
-   ((nullo lst))
-   ((fresh (a d)
-      (conso a d lst)
-      (g a)
-      (everyo g d)))))
+    ((nullo lst))
+    ((fresh (a d)
+       (conso a d lst)
+       (g a)
+       (everyo g d)))))
 
 ;; A relation which guarantees no element of s will unify with another element
 ;; of s.

@@ -24,18 +24,18 @@
 (module mini-kanren *
   (cond-expand
     ((or chicken-6 chicken-5)
-      (import (scheme)
-              (chicken base)
-              (chicken module)
-              (chicken sort)
-              (only (chicken port) call-with-output-string)))
+     (import (scheme)
+             (chicken base)
+             (chicken module)
+             (chicken sort)
+             (only (chicken port) call-with-output-string)))
     (else
       (import scheme chicken)
       (use data-structures
            extras
            (only ports call-with-output-string))))
 
-  (define (remp pred? lst) 
+  (define (remp pred? lst)
     (foldl (lambda (k x)
              (if (pred? x)
                k
@@ -43,11 +43,12 @@
            '()
            lst))
 
-  (define (exists pred? lst) 
-    (call-with-current-continuation (lambda (cont)
-               (foldl (lambda (_ x) (if (pred? x) (cont #t) #f))
-                      #f
-                      lst))))
+  (define (exists pred? lst)
+    (call-with-current-continuation
+      (lambda (cont)
+        (foldl (lambda (_ x) (if (pred? x) (cont #t) #f))
+               #f
+               lst))))
 
   (define call-with-string-output-port call-with-output-string)
 

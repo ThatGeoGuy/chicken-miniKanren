@@ -41,8 +41,8 @@
     (if (null? num)
       acc
       (loop (* 2 power)
-            (cdr num)
-            (+ acc (* power (car num)))))))
+        (cdr num)
+        (+ acc (* power (car num)))))))
 
 (define (zeroo n)
   (== '() n))
@@ -70,18 +70,18 @@
   (conde
     ((== 0 d) (== '() m) (== n r))
     ((== 0 d) (== '() n) (== m r)
-              (poso m))
+     (poso m))
     ((== 1 d) (== '() m)
-              (addero 0 n '(1) r))
+     (addero 0 n '(1) r))
     ((== 1 d) (== '() n) (poso m)
-              (addero 0 '(1) m r))
+     (addero 0 '(1) m r))
     ((== '(1) n) (== '(1) m)
-                 (fresh (a c)
-                   (== `(,a ,c) r)
-                   (full-addero d 1 1 a c)))
+     (fresh (a c)
+       (== `(,a ,c) r)
+       (full-addero d 1 1 a c)))
     ((== '(1) n) (gen-addero d n m r))
     ((== '(1) m) (>1o n) (>1o r)
-                 (addero d '(1) n r))
+     (addero d '(1) n r))
     ((>1o n) (gen-addero d n m r))))
 
 (define (gen-addero d n m r)
@@ -181,7 +181,7 @@
   (conde
     ((== r n) (== '() q) (<o n m))
     ((== '(1) q) (=lo n m) (pluso r m n)
-                 (<o r m))
+     (<o r m))
     ((<lo m n)
      (<o r m)
      (poso q)
@@ -279,8 +279,8 @@
   (conde
     ((== '(1) n) (== '() q))
     ((>1o n) (== '(1) q)
-             (fresh (s)
-               (splito n b s '(1))))
+     (fresh (s)
+       (splito n b s '(1))))
     ((fresh (q1 b2)
        (== `(0 . ,q1) q)
        (poso q1)
@@ -307,4 +307,3 @@
 
 (define (expo b q n)
   (logo n b q '()))
-
