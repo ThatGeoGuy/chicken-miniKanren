@@ -1,5 +1,9 @@
-(import test
-        mini-kanren)
+(cond-expand
+  ((or chicken-5 chicken-6)
+   (import test mini-kanren))
+  (chicken-4
+    (use test mini-kanren))
+  (else))
 
 (test-group "miniKanren"
   (include "==-tests.scm")
