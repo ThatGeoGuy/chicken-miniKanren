@@ -3,7 +3,8 @@
    (import test mini-kanren))
   (chicken-4
     (use test mini-kanren))
-  (else))
+  (else
+    (error "CHICKEN version not supported!")))
 
 (test-group "miniKanren"
   (include "==-tests.scm")
