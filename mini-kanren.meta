@@ -1,4 +1,4 @@
-;; -*- Hen -*-
+;; -*- Hen -*- vim: ft=scheme
 
 ((egg "mini-kanren.egg")
  (files "mini-kanren.scm"
@@ -16,5 +16,4 @@
  (maintainer "Jeremy Steward")
  (test-depends test)
  (email "jeremy@thatgeoguy.ca")
- (repo "https://bitbucket.org/ThatGeoGuy/chicken-minikanren")
- (synopsis "Provides canonical miniKanren language - https://github.com/miniKanren/miniKanren"))
+ (synopsis "Packages the canonical miniKanren implementation for CHICKEN Scheme."))

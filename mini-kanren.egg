@@ -1,7 +1,7 @@
-;; -*- Hen -*-
+;; -*- Hen -*- vim: ft=scheme
 
 ((synopsis "Packages the canonical miniKanren implementation for CHICKEN Scheme.")
- (version "1.2.0")
+ (version "1.3.0")
  (license "MIT")
  (category logic)
  (dependencies srfi-1)
@@ -11,4 +11,4 @@
  (components
   (extension
    mini-kanren
-   (csc-options "-O3" "-d0"))))
+   (csc-options "-O3" "-d2"))))
