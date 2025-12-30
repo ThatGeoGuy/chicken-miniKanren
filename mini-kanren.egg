@@ -8,6 +8,10 @@
  (author "William Byrd, Dan Friedman, Oleg Kiselyov")
  (maintainer "Jeremy Steward")
  (components
-  (extension
-   mini-kanren
-   (csc-options "-O3" "-d2"))))
+   (extension
+     mini-kanren
+     (source "mini-kanren.scm")
+     (source-dependencies "mk.scm"
+                          "mk-extras.scm"
+                          "mk-numbers.scm")
+     (csc-options "-O3" "-d2"))))
