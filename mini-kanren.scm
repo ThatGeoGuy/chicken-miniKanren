@@ -22,16 +22,16 @@
 ;;; SOFTWARE.
 
 (module mini-kanren *
-  (import scheme)
   (cond-expand
-    (chicken-5
-      (import (chicken base)
+    ((or chicken-6 chicken-5)
+      (import (scheme)
+              (chicken base)
               (chicken module)
               (chicken sort)
               (only (chicken port) call-with-output-string)
               (only srfi-1 remove any)))
     (else
-      (import chicken)
+      (import scheme chicken)
       (use data-structures
            extras
            (only ports call-with-output-string)

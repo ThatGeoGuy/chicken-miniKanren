@@ -26,7 +26,7 @@
 
 ;; There are two modifications of note: one to `sort`, which in CHICKEN takes
 ;; the arguments in reverse order, and to `take`, which is renamed `mk$take` so
-;; as not to clash with take from srfi-1 (due to it being a builtin in CHICKEN 4.
+;; as not to clash with take from srfi-1 (due to it being a builtin in CHICKEN 4)
 
 (define c->S (lambda (c) (car c)))
 
