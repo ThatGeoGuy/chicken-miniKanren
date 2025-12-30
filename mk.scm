@@ -221,13 +221,6 @@
 
 (define pr->pred (lambda (pr) (cdr (rhs pr))))
 
-(define =/=
-  (lambda (u v)
-    (lambdag@ (c : S D A T)
-              (cond
-                ((unify u v S) => (post-unify-=/= S D A T))
-                (else (unit c))))))
-
 (define post-unify-=/=
   (lambda (S D A T)
     (lambda (S+)
@@ -238,6 +231,13 @@
                   (let ((D+ (subsume T D+)))
                     (let ((D (append D+ D)))
                       (unit `(,S ,D ,A ,T)))))))))))
+
+(define =/=
+  (lambda (u v)
+    (lambdag@ (c : S D A T)
+              (cond
+                ((unify u v S) => (post-unify-=/= S D A T))
+                (else (unit c))))))
 
 (define prefix-S
   (lambda (S+ S)

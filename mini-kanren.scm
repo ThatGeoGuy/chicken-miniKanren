@@ -28,17 +28,27 @@
               (chicken base)
               (chicken module)
               (chicken sort)
-              (only (chicken port) call-with-output-string)
-              (only srfi-1 remove any)))
+              (only (chicken port) call-with-output-string)))
     (else
       (import scheme chicken)
       (use data-structures
            extras
-           (only ports call-with-output-string)
-           (only srfi-1 remove any))))
+           (only ports call-with-output-string))))
 
-  (define remp remove)
-  (define exists any)
+  (define (remp pred? lst) 
+    (foldl (lambda (k x)
+             (if (pred? x)
+               k
+               (cons x k)))
+           '()
+           lst))
+
+  (define (exists pred? lst) 
+    (call-with-current-continuation (lambda (cont)
+               (foldl (lambda (_ x) (if (pred? x) (cont #t) #f))
+                      #f
+                      lst))))
+
   (define call-with-string-output-port call-with-output-string)
 
   (include "mk.scm")
